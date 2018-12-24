@@ -1,0 +1,16 @@
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-md-10"></div>
+      <div class="col-md-2">
+          <label>Copiar Contenido</label>
+          <button mat-button mat-icon-button color="primary" (click)="copy()">
+              <mat-icon>content_copy</mat-icon>
+          </button>
+      </div>
+  </div>
+  <mat-card>
+      <mat-card-content>
+          <textarea class="form-control" class="resizeTextArea" [(ngModel)]="req"></textarea>
+      </mat-card-content>
+  </mat-card>
+</div>

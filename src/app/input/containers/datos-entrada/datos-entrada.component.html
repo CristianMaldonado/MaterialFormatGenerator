@@ -1,0 +1,330 @@
+<!-- <mat-toolbar>
+  <button mat-button [matMenuTriggerFor]="menu">Menu</button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item>Settings</button>
+    <button mat-menu-item>Item 2</button>
+  </mat-menu>
+  <span>Format Generator</span>
+</mat-toolbar> -->
+
+<div class="row" style="width: 100%;">
+  <!-- REQUEST -->
+  <div class="col-md-6">
+    <mat-card class="expandido">
+      <mat-card-header>
+        <mat-card-title>
+          <em class="titulo">Request</em>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="row">
+          <div class="col-md-6">
+            <mat-form-field>
+              <input matInput type="text" placeholder="Id Requerimiento" [(ngModel)]="idRequest" />
+              <button mat-button *ngIf="idRequest" matSuffix mat-icon-button aria-label="Clear" (click)="idRequest=''">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+          
+          <div class="col-md-6">
+            <mat-form-field>
+              <input matInput type="text" placeholder="Nombre Requerimiento" [(ngModel)]="requestName"/>
+              <button mat-button *ngIf="requestName" matSuffix mat-icon-button aria-label="Clear" (click)="requestName=''">
+                <mat-icon>close</mat-icon>
+              </button>    
+            </mat-form-field>
+          </div>
+        </div>
+          
+        <div class="row">
+          <div class="col-md-12">
+            <app-input-tag-values
+              (addToTable)="addValueToTable('request',$event)"
+            ></app-input-tag-values>
+            <!-- Agregar un poco de css para que se vea mejor la tabla -->
+            <div>
+                <div>
+                  <mat-form-field>
+                    <input matInput (keyup)="applyFilter(dataSourceRequest, $event.target.value)" placeholder="Filtro Busqueda">
+                  </mat-form-field>
+                </div>
+                <!-- Tabla de los tags -->
+                <mat-table #table [dataSource]="dataSourceRequest" matSort>
+              
+                  <!-- <ng-container matColumnDef="posicion">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Nro. </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.posicion}} </mat-cell>
+                  </ng-container> -->
+
+                  <ng-container matColumnDef="tags">
+                    <mat-header-cell *matHeaderCellDef> Tags </mat-header-cell>
+                    <!-- Elementos que ingreso por el input TAG -->
+                    <mat-cell *matCellDef="let element"> 
+                      <div class="row" style="width: 100%;">
+                        <div *ngIf="element.atributo == element.tag; then col6 else col3"></div>
+                        <ng-template #col6>
+                          <div class="col-md-6">
+                            {{element.tag}} 
+                          </div>
+                        </ng-template>
+                        
+                        <ng-template #col3>
+                          <div class="col-md-3">
+                            {{element.tag}}
+                          </div>
+                          <div class="col-md-3">
+                            {{element.atributo}}
+                          </div>
+                        </ng-template>
+
+                        <div class="col-md-3"></div>
+                        <!-- <div class="col-md-2">
+                          <mat-checkbox 
+                            (change)="editValueFromList(element.posicion)"
+                            [(ngModel)]="element.editar"
+                            >Edit</mat-checkbox> 
+                        </div> -->
+                        <div class="col-md-3 text-right">
+                          <mat-checkbox 
+                            class="sinCheck"
+                            (change)="removeValueFromList('request', element.posicion)" 
+                            [(ngModel)]="element.remover"
+                            ><mat-icon class="posicionDelete">delete</mat-icon></mat-checkbox>
+                        </div>
+                      </div>
+                    </mat-cell>
+                  </ng-container>
+              
+                  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+            </div>
+
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <!-- RESPONSE -->
+  <div class="col-md-6">
+    <mat-card class="expandido">
+      <mat-card-header>
+        <mat-card-title>
+          <em class="titulo">Response</em>
+        </mat-card-title>
+      </mat-card-header>
+
+      <div *ngIf="!tieneRowset; then DataResp else DataRowset"></div>
+
+      <ng-template #DataResp>
+        <mat-card-content>
+          <div class="row">
+            <div class="col-md-4">
+                <mat-form-field>
+                  <input matInput type="text" placeholder="Id Response" [(ngModel)]="idResponse"/>
+                  <button mat-button *ngIf="idResponse" matSuffix mat-icon-button aria-label="Clear" (click)="idResponse=''">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </mat-form-field>
+            </div>
+            <div class="col-md-4">
+              <mat-form-field>
+                <input matInput type="text" placeholder="Nombre Clase Data Resp" [(ngModel)]="responseDataClass"/>
+                <button mat-button *ngIf="responseDataClass" matSuffix mat-icon-button aria-label="Clear" (click)="responseDataClass=''">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
+            <div class="col-md-4">
+              <div class="posicionCheck">
+                <mat-checkbox [(ngModel)]="tieneRowset">Rowset</mat-checkbox>  
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <app-input-tag-values
+                (addToTable)="addValueToTable('response',$event)"
+              ></app-input-tag-values>
+            </div>
+          </div>
+          <!-- TABLA EN EL RESPONSE COMUN -->
+          <div class="row">
+            <div class="col-md-12">
+              <div>
+                <div>
+                  <mat-form-field>
+                    <input matInput (keyup)="applyFilter(dataSourceResponse, $event.target.value)" placeholder="Filtro Busqueda">
+                  </mat-form-field>
+                </div>
+                <!-- Tabla de los tags -->
+                <mat-table #table [dataSource]="dataSourceResponse" matSort>
+              
+                  <!-- <ng-container matColumnDef="posicion">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Nro. </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.posicion}} </mat-cell>
+                  </ng-container> -->
+    
+                  <ng-container matColumnDef="tags">
+                    <mat-header-cell *matHeaderCellDef> Tags </mat-header-cell>
+                    <!-- Elementos que ingreso por el input TAG -->
+                    <mat-cell *matCellDef="let element"> 
+                      <div class="row" style="width: 100%">
+                        <div *ngIf="element.atributo == element.tag; then col6 else col3"></div>
+                        <ng-template #col6>
+                          <div class="col-md-6">
+                            {{element.tag}} 
+                          </div>
+                        </ng-template>
+                        
+                        <ng-template #col3>
+                          <div class="col-md-3">
+                            {{element.tag}}
+                          </div>
+                          <div class="col-md-3">
+                            {{element.atributo}}
+                          </div>
+                        </ng-template>
+    
+                        <div class="col-md-3"></div>
+                        <!-- <div class="col-md-2">
+                          <mat-checkbox 
+                            (change)="editValueFromList(element.posicion)"
+                            [(ngModel)]="element.editar"
+                            >Edit</mat-checkbox> 
+                        </div> -->
+                        <div class="col-md-3 text-right">
+                          <mat-checkbox 
+                            class="sinCheck"
+                            (change)="removeValueFromList('response', element.posicion)" 
+                            [(ngModel)]="element.remover"
+                            ><mat-icon class="posicionDelete">delete</mat-icon></mat-checkbox>
+                        </div>
+                      </div>
+                    </mat-cell>
+                  </ng-container>
+              
+                  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+              </div>
+            </div>
+          </div>
+
+        </mat-card-content>
+      </ng-template>
+
+      <ng-template #DataRowset>
+        <mat-card-content>
+          <div class="row">
+            <div class="col-md-6">
+                <mat-form-field>
+                  <input matInput type="text" placeholder="Nombre Clase Rowset" [(ngModel)]="rowsetClass"/>
+                  <button mat-button *ngIf="rowsetClass" matSuffix mat-icon-button aria-label="Clear" (click)="rowsetClass=''">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+              <div class="posicionCheck">
+                <mat-checkbox [(ngModel)]="tieneRowset">Rowset</mat-checkbox>  
+              </div>
+            </div>
+          </div>
+      
+          <div class="row">
+            <div class="col-md-12">
+              <app-input-tag-values
+                (addToTable)="addValueToTable('responseRowset',$event)"
+              ></app-input-tag-values>
+            </div>
+          </div>
+          <!-- TABLA EN CASO DE QUE SEA ROWSET -->
+          <div class="row">
+            <div class="col-md-12">
+              <div>
+                <div>
+                  <mat-form-field>
+                    <input matInput (keyup)="applyFilter(dataSourceResponseRowset, $event.target.value)" placeholder="Filtro Busqueda">
+                  </mat-form-field>
+                </div>
+                <!-- Tabla de los tags -->
+                <mat-table #table [dataSource]="dataSourceResponseRowset" matSort>
+              
+                  <!-- <ng-container matColumnDef="posicion">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Nro. </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.posicion}} </mat-cell>
+                  </ng-container> -->
+    
+                  <ng-container matColumnDef="tags">
+                    <mat-header-cell *matHeaderCellDef> Tags </mat-header-cell>
+                    <!-- Elementos que ingreso por el input TAG -->
+                    <mat-cell *matCellDef="let element"> 
+                      <div class="row">
+                        <div *ngIf="element.atributo == ''; then col6 else col3"></div>
+                        <ng-template #col6>
+                          <div class="col-md-6">
+                            {{element.tag}} 
+                          </div>
+                        </ng-template>
+                        
+                        <ng-template #col3>
+                          <div class="col-md-3">
+                            {{element.tag}}
+                          </div>
+                          <div class="col-md-3">
+                            {{element.atributo}}
+                          </div>
+                        </ng-template>
+    
+                        <div class="col-md-3"></div>
+                        <!-- <div class="col-md-2">
+                          <mat-checkbox 
+                            (change)="editValueFromList(element.posicion)"
+                            [(ngModel)]="element.editar"
+                            >Edit</mat-checkbox> 
+                        </div> -->
+                        <div class="col-md-3">
+                          <mat-checkbox 
+                            class="sinCheck"
+                            (change)="removeValueFromList('responseRowset', element.posicion)" 
+                            [(ngModel)]="element.remover"
+                            ><mat-icon class="posicionDelete">delete</mat-icon></mat-checkbox>
+                        </div>
+                      </div>
+                    </mat-cell>
+                  </ng-container>
+              
+                  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+              </div>
+            </div>
+          </div>
+
+
+        </mat-card-content>
+      </ng-template>
+    </mat-card>
+  </div>
+</div>
+<mat-card>
+  <mat-card-content>
+    <div class="row">
+      <div class="col-md-6">    
+      </div>
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-6">
+              <button mat-raised-button color="primary" (click)="sendInfoToFormat()">OK</button>
+          </div>
+          <div class="col-md-6">
+              <button mat-raised-button color="warn" (click)="cleanInputs()">RESET</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

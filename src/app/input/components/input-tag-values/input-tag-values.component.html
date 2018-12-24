@@ -1,0 +1,38 @@
+<div class="row">
+
+  <div *ngIf="!igualarTagConValue; then tagAndValue else onlyTag"></div>
+
+  <ng-template #tagAndValue>
+    <div class="col-md-4">
+      <mat-form-field>
+        <input matInput type="text" placeholder="Tag de Middle" [(ngModel)]="tag"/>
+        <button mat-button *ngIf="tag" matSuffix mat-icon-button aria-label="Clear" (click)="tag=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>  
+    </div>
+    <div class="col-md-4">
+      <mat-form-field>
+        <input matInput type="text" placeholder="Atributo de clase" [(ngModel)]="value" (keydown)="enviarATabla($event)"/>
+        <button mat-button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+  </ng-template>
+  <ng-template #onlyTag>
+    <div class="col-md-8">
+      <mat-form-field>
+        <input matInput type="text" placeholder="Tag" [(ngModel)]="soloTag" (keydown)="enviarATabla($event)"/>
+        <button mat-button *ngIf="soloTag" matSuffix mat-icon-button aria-label="Clear" (click)="soloTag=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>  
+    </div>
+  </ng-template>
+  <div class="col-md-4">
+    <div class="posicionCheck">
+      <mat-checkbox [(ngModel)]="igualarTagConValue">Tag = Atributo</mat-checkbox>      
+    </div>
+  </div>
+</div>
